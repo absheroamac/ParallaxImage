@@ -39,23 +39,29 @@ const LoadingScreen = () => {
       ease: "power2.out",
       delay: 1.5,
     });
+
+    gsap.to(".button", {
+      opacity: 1,
+      duration: 2,
+      delay: 1.5,
+    });
   });
   return (
     <div className="grid relative grid-cols-18 gap-0 h-screen bg-white">
       <Image
         src={"/Layer 2.png"}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mix-blend-difference logo z-40"
-        width={600}
-        height={450}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-3/4 mix-blend-difference logo z-40"
+        width={450}
+        height={500}
       />
       <Image
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 translate-y-40 tagline mix-blend-difference z-40"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 translate-y-16 tagline mix-blend-difference z-40"
         src={"/tagline.png"}
-        width={600}
+        width={450}
         height={100}
         alt="Tagline"
       />
-      <div className="absolute bottom-14 left-1/2 -translate-x-1/2">
+      <div className="absolute opacity-0 button bottom-14 left-1/2 -translate-x-1/2">
         <Button text={"ENTER"} className />
       </div>
 

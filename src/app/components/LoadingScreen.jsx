@@ -48,19 +48,22 @@ const LoadingScreen = () => {
   });
   return (
     <div className="grid relative grid-cols-18 gap-0 h-screen bg-white">
-      <Image
-        src={"/Layer 2.png"}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-3/4 mix-blend-difference logo z-40"
-        width={450}
-        height={500}
-      />
-      <Image
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 translate-y-16 tagline mix-blend-difference z-40"
-        src={"/tagline.png"}
-        width={450}
-        height={100}
-        alt="Tagline"
-      />
+      <div className="absolute mix-blend-difference gap-6 z-100 w-full h-full flex flex-col justify-center items-center">
+        <Image
+          src={"/Layer 2.png"}
+          className="logo"
+          alt="image"
+          width={450}
+          height={200}
+        />
+        <Image
+          className=" tagline mix-blend-difference z-40"
+          src={"/tagline.png"}
+          width={450}
+          height={50}
+          alt="Tagline"
+        />
+      </div>
       <div className="absolute opacity-0 button bottom-14 left-1/2 -translate-x-1/2">
         <Button text={"ENTER"} className />
       </div>

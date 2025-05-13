@@ -64,7 +64,7 @@ const LoadingScreen = () => {
           alt="Tagline"
         />
       </div>
-      <div className="absolute opacity-0 button bottom-14 left-1/2 -translate-x-1/2">
+      <div className="absolute z-100 opacity-0 button bottom-14 left-1/2 -translate-x-1/2">
         <Button text={"ENTER"} className />
       </div>
 

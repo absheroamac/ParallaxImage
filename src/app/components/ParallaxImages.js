@@ -4,8 +4,10 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+import Lenis from "@studio-freight/lenis";
+import ScrollTrigger from "gsap/ScrollTrigger";
 
-gsap.registerPlugin(ScrollToPlugin);
+gsap.registerPlugin(ScrollToPlugin, ScrollTrigger);
 
 const images = [
   "/img1.jpg",
@@ -17,158 +19,167 @@ const images = [
 
 export default function ParallaxSlider() {
   const containerRef = useRef(null);
+  const lenisRef = useRef(null);
 
   const infiniteImages = [
-    images[images.length - 4],
-    images[images.length - 3],
-    images[images.length - 2],
-    images[images.length - 1],
+    ...images.slice(-4),
     ...images,
-    images[0],
-    images[1],
-    images[2],
-    images[3],
+    ...images.slice(0, 4),
   ];
 
-  // Adjusted logic to ensure the card is vertically centered in the viewport
+  // Lenis setup
   useEffect(() => {
+    if (!containerRef.current) return;
+
+    // Initialize Lenis
+    const lenis = new Lenis({
+      wrapper: containerRef.current,
+      content: containerRef.current.firstChild,
+      infinite: true,
+      smooth: true,
+      gestureOrientation: "vertical",
+      wheelMultiplier: 1,
+      touchMultiplier: 1,
+      orientation: "vertical",
+    });
+    lenisRef.current = lenis;
+
+    lenis.on("scroll", ScrollTrigger.update);
+    gsap.ticker.lagSmoothing(0);
+
+    // GSAP Parallax on scroll
+    lenis.on("scroll", ({ scroll }) => {
+      applyParallax(scroll);
+    });
+
+    // Animation frame loop for Lenis
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    // const totalHeight = containerRef.current.firstChild.scrollHeight;
+    // console.log(totalHeight);
+    // lenis.scrollTo(totalHeight / 2, { immediate: true });
+
     const container = containerRef.current;
-
-    // Set initial scroll position to the middle of the container
-    const cardHeight = container.firstChild.offsetHeight + 32; // Card height + margin
     const viewportHeight = container.clientHeight;
-    const offsetToCenter = (viewportHeight - cardHeight) / 2; // Calculate offset to center the card
+    const viewportWidth = container.clientWidth;
+    const contentHeight = container.firstChild.scrollHeight;
+    const margin = window.innerHeight * 0.04; // 4vh in pixels
+    const centerPosition = (contentHeight - viewportHeight) / 2 + margin;
+    const cardHeight = window.innerHeight * 0.74;
 
-    container.scrollTop =
-      Math.floor(container.scrollHeight / 2 / cardHeight) * cardHeight -
-      offsetToCenter;
-
-    const handleScroll = () => {
-      const scrollTop = container.scrollTop;
-      const scrollHeight = container.scrollHeight;
-      const clientHeight = container.clientHeight;
-
-      // Infinite scroll logic
-      if (scrollTop <= 0) {
-        container.scrollTop = scrollHeight / 2 - clientHeight;
-      } else if (scrollTop + clientHeight >= scrollHeight) {
-        container.scrollTop = scrollHeight / 2;
+    lenis.on("scroll", ({ scroll }) => {
+      // When reaching the bottom of the content
+      if (scroll >= contentHeight - viewportHeight) {
+        lenis.scrollTo(centerPosition + cardHeight, { immediate: true });
       }
+      // When reaching the top of the content
+      else if (scroll <= 0) {
+        lenis.scrollTo(centerPosition, { immediate: true });
+      }
+    });
 
-      // Identify active, previous, and next cards
-      const cards = Array.from(container.children);
-      const activeIndex = Math.round((scrollTop + offsetToCenter) / cardHeight);
-
-      cards.forEach((card, index) => {
-        const image = card.querySelector(".object-cover");
-
-        if (index === activeIndex) {
-          // Active card parallax effect
-          const offset = ((scrollTop + offsetToCenter) % cardHeight) * 0.2;
-          gsap.to(image, {
-            y: -offset, // Move up when scrolling down, down when scrolling up
-            duration: 0.5,
-            ease: "power2.out",
-          });
-        } else if (index === activeIndex - 1 || index === activeIndex + 1) {
-          // Previous and next cards parallax effect
-          const offset = ((scrollTop + offsetToCenter) % cardHeight) * 0.1;
-          gsap.to(image, {
-            y: index < activeIndex ? offset : -offset, // Adjust direction based on position
-            duration: 0.5,
-            ease: "power2.out",
-          });
-        } else {
-          // Reset image position for cards out of view
-          gsap.to(image, {
-            y: 0,
-            duration: 0.5,
-            ease: "power2.out",
-          });
-        }
-      });
-    };
-
-    container.addEventListener("scroll", handleScroll);
+    // Scroll to center
+    lenis.scrollTo(centerPosition, {
+      immediate: false,
+      duration: 1,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential ease out
+    });
 
     return () => {
-      container.removeEventListener("scroll", handleScroll);
+      lenis.destroy();
     };
+    // eslint-disable-next-line
   }, []);
 
-  // Ensure the card is centered programmatically
-  const handleNext = () => {
+  // Parallax logic (adjust as needed)
+  const applyParallax = (scrollTop) => {
     const container = containerRef.current;
-    const cardHeight = container.firstChild.offsetHeight + 32; // Card height + margin
-    gsap.to(container, {
-      scrollTo: { y: container.scrollTop + cardHeight },
-      duration: 0.5,
-      onComplete: () => {
-        // Ensure the active card is centered
-        const activeIndex = Math.round(container.scrollTop / cardHeight);
-        const targetScroll = activeIndex * cardHeight;
-        gsap.to(container, {
-          scrollTo: { y: targetScroll },
-          duration: 0.2,
-        });
-      },
+    if (!container) return;
+
+    const cards = container.querySelectorAll(".parallax-card");
+    cards.forEach((card) => {
+      const img = card.querySelector(".object-cover");
+      if (!img) return;
+      // Example: move image based on scroll position
+
+      gsap.set(img, {
+        objectPosition: "center center",
+        y: "-40%",
+      });
+
+      gsap.to(
+        img,
+
+        {
+          y: "20%",
+
+          ease: "none",
+          scrollTrigger: {
+            trigger: card,
+            scroller: container,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1,
+            immediateRender: true,
+          },
+        }
+      );
     });
   };
 
-  const handlePrev = () => {
+  // Button scroll (Lenis API)
+  const scrollByCard = (direction) => {
     const container = containerRef.current;
-    const cardHeight = container.firstChild.offsetHeight + 32; // Card height + margin
-    gsap.to(container, {
-      scrollTo: { y: container.scrollTop - cardHeight },
-      duration: 0.5,
-      onComplete: () => {
-        // Ensure the active card is centered
-        const activeIndex = Math.round(container.scrollTop / cardHeight);
-        const targetScroll = activeIndex * cardHeight;
-        gsap.to(container, {
-          scrollTo: { y: targetScroll },
-          duration: 0.2,
-        });
-      },
-    });
+    if (!container || !lenisRef.current) return;
+    const card = container.querySelector(".parallax-card");
+    if (!card) return;
+    const cardHeight = card.offsetHeight + window.innerHeight * 0.04;
+    lenisRef.current.scrollTo(
+      lenisRef.current.scroll + (direction === "up" ? -cardHeight : cardHeight),
+      { immediate: false, duration: 1 }
+    );
   };
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-white">
+      <div
+        ref={containerRef}
+        className="h-full w-full overflow-hidden"
+        style={{ position: "relative" }}
+      >
+        <div className="relative">
+          {infiniteImages.map((src, index) => (
+            <div
+              key={index}
+              className="parallax-card w-[80vw] h-[70vh] mx-auto rounded-3xl overflow-hidden my-[4vh]"
+            >
+              <Image
+                src={src}
+                width={1000}
+                height={2000}
+                className="w-full h-[100vh] object-cover object-center scale-105"
+                alt={`Slide ${index + 1}`}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
       <button
-        className="text-white absolute z-50 bg-amber-500 p-4"
-        onClick={handlePrev}
+        className="absolute z-50 top-4 left-4 bg-amber-500 text-white px-4 py-2 rounded"
+        onClick={() => scrollByCard("up")}
       >
         Prev
       </button>
-
       <button
-        className="text-white absolute left-20 z-50 bg-amber-600 p-4"
-        onClick={handleNext}
+        className="absolute z-50 top-4 left-24 bg-amber-600 text-white px-4 py-2 rounded"
+        onClick={() => scrollByCard("down")}
       >
         Next
       </button>
-
-      <div
-        ref={containerRef}
-        className="h-full overflow-hidden"
-        style={{ scrollBehavior: "smooth" }}
-      >
-        {infiniteImages.map((src, index) => (
-          <div
-            key={index}
-            className="w-[80vw] h-[70vh] rounded-4xl overflow-hidden my-[4vh]"
-          >
-            <Image
-              src={src}
-              width={1000}
-              height={1000}
-              className="w-full scale-105 object-cover"
-              alt={`Slide ${index + 1}`}
-            />
-          </div>
-        ))}
-      </div>
     </div>
   );
 }

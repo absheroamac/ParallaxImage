@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import Lenis from "@studio-freight/lenis";
 import ScrollTrigger from "gsap/ScrollTrigger";
+import CardWrapper from "@/components/CardWrapper";
 
 gsap.registerPlugin(ScrollToPlugin, ScrollTrigger);
 
@@ -68,26 +69,29 @@ export default function ParallaxSlider() {
     const viewportWidth = container.clientWidth;
     const contentHeight = container.firstChild.scrollHeight;
     const margin = window.innerHeight * 0.04; // 4vh in pixels
-    const centerPosition = (contentHeight - viewportHeight) / 2 + margin;
+    const centerPosition = (contentHeight - viewportHeight) / 2;
     const cardHeight = window.innerHeight * 0.74;
+
+    lenis.scrollTo(centerPosition, {
+      immediate: false,
+      duration: 1,
+    });
 
     lenis.on("scroll", ({ scroll }) => {
       // When reaching the bottom of the content
-      if (scroll >= contentHeight - viewportHeight) {
+      if (scroll >= contentHeight - viewportHeight * 0.04) {
         lenis.scrollTo(centerPosition + cardHeight, { immediate: true });
       }
       // When reaching the top of the content
-      else if (scroll <= 0) {
-        lenis.scrollTo(centerPosition, { immediate: true });
+      else if (scroll <= viewportHeight + cardHeight) {
+        lenis.scrollTo(centerPosition + cardHeight, { immediate: true });
+        gsap.set(".object-cover", {
+          y: "-36%",
+        });
       }
     });
 
     // Scroll to center
-    lenis.scrollTo(centerPosition, {
-      immediate: false,
-      duration: 1,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential ease out
-    });
 
     return () => {
       lenis.destroy();
@@ -106,13 +110,16 @@ export default function ParallaxSlider() {
       if (!img) return;
       // Example: move image based on scroll position
 
-      gsap.set(img, {
-        objectPosition: "center center",
-        y: "-40%",
-      });
+      // gsap.set(img, {
+      //   objectPosition: "center center",
+      //   y: "-40%",
+      // });
 
-      gsap.to(
+      gsap.fromTo(
         img,
+        {
+          y: "-40%",
+        },
 
         {
           y: "20%",
@@ -123,8 +130,15 @@ export default function ParallaxSlider() {
             scroller: container,
             start: "top bottom",
             end: "bottom top",
-            scrub: 1,
+            scrub: 0,
             immediateRender: true,
+            onUpdate: (self) => {
+              // Log progress and y position
+              console.log(`Card :`, {
+                progress: self.progress.toFixed(2),
+                yPercent: gsap.getProperty(img, "y"),
+              });
+            },
           },
         }
       );
@@ -140,35 +154,48 @@ export default function ParallaxSlider() {
     const cardHeight = card.offsetHeight + window.innerHeight * 0.04;
     lenisRef.current.scrollTo(
       lenisRef.current.scroll + (direction === "up" ? -cardHeight : cardHeight),
-      { immediate: false, duration: 1 }
+      {
+        immediate: false,
+        duration: 1,
+        easing: (t) => {
+          // Ease-out cubic - starts fast, ends slow
+          return 1 - Math.pow(1 - t, 3);
+
+          // Alternative easings you could try:
+          // return 1 - Math.pow(1 - t, 4);    // Ease-out quart (even smoother end)
+          // return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); // Exponential ease-out
+        },
+      }
     );
   };
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-white">
+    <div className="relative h-screen w-full overflow-hidden bg-black">
       <div
         ref={containerRef}
         className="h-full w-full overflow-hidden"
         style={{ position: "relative" }}
       >
-        <div className="relative">
+        <div className="relative my-0 p-0 mx-auto flex flex-col gap-0 items-center">
           {infiniteImages.map((src, index) => (
-            <div
-              key={index}
-              className="parallax-card w-[80vw] h-[70vh] mx-auto rounded-3xl overflow-hidden my-[4vh]"
-            >
-              <Image
-                src={src}
-                width={1000}
-                height={2000}
-                className="w-full h-[100vh] object-cover object-center scale-105"
-                alt={`Slide ${index + 1}`}
-              />
-            </div>
+            <CardWrapper key={index}>
+              <div
+                key={index}
+                className="parallax-card w-[90vw] h-[70vh] mx-auto rounded-3xl overflow-hidden "
+              >
+                <Image
+                  src={src}
+                  width={1000}
+                  height={2000}
+                  className="w-full h-[100vh]  object-cover object-center scale-105"
+                  alt={`Slide ${index + 1}`}
+                />
+              </div>
+            </CardWrapper>
           ))}
         </div>
       </div>
-      <button
+      {/* <button
         className="absolute z-50 top-4 left-4 bg-amber-500 text-white px-4 py-2 rounded"
         onClick={() => scrollByCard("up")}
       >
@@ -179,7 +206,22 @@ export default function ParallaxSlider() {
         onClick={() => scrollByCard("down")}
       >
         Next
-      </button>
+      </button> */}
+      <div
+        onClick={() => scrollByCard("down")}
+        className="absolute cursor-pointer bottom-0 bg-gradient-to-t from-black to-transparent h-[10vh] w-[100vw]"
+      ></div>
+      <div
+        onClick={() => scrollByCard("up")}
+        className="absolute cursor-pointer top-0 bg-gradient-to-t to-black from-transparent h-[10vh] w-[100vw]"
+      ></div>
+      <Image
+        src={"/Layer 2.png"}
+        className="absolute z-99 top-6 left-6 w-20 "
+        alt="image"
+        width={450}
+        height={200}
+      />
     </div>
   );
 }

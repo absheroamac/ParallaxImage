@@ -8,8 +8,8 @@ export default function Home() {
   return (
     <main className="bg-black text-white">
       {/* <Button /> */}
-      {/* <LoadingScreen /> */}
-      <ParallaxImages />
+      <LoadingScreen />
+      {/* <ParallaxImages /> */}
     </main>
   );
 }

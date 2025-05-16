@@ -47,7 +47,7 @@ const LoadingScreen = () => {
     });
   });
   return (
-    <div className="grid relative grid-cols-18 gap-0 h-screen bg-white">
+    <div className="grid relative grid-cols-22 gap-0 h-screen bg-white">
       <div className="absolute mix-blend-difference gap-6 z-100 w-full h-full flex flex-col justify-center items-center">
         <Image
           src={"/Layer 2.png"}
@@ -68,7 +68,7 @@ const LoadingScreen = () => {
         <Button text={"ENTER"} className />
       </div>
 
-      {Array.from({ length: 18 }).map((_, index) => (
+      {Array.from({ length: 22 }).map((_, index) => (
         <div
           key={index}
           className="bg-black h-full overflow-hidden flex items-center justify-center text-white"

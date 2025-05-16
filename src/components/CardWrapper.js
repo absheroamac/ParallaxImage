@@ -1,6 +1,6 @@
 const CardWrapper = ({ children }) => {
   return (
-    <div className="relative  my-[2vh]  w-[90vw] h-[70vh]">
+    <div className="relative    w-[90vw] h-[70vh]">
       <svg className="absolute w-0 h-0">
         <defs>
           <clipPath id="custom-clip" clipPathUnits="objectBoundingBox">

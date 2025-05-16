@@ -1,3 +1,19 @@
+@font-face {
+  font-family: "MyFont";
+  src: url("/fonts/NeueBrucke-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "p22";
+  src: url("/fonts/P22 Parrish Roman.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @import "tailwindcss";
 
 :root {
@@ -35,4 +51,18 @@ body {
   border-left-style: dashed;
   border-left-color: white;
   border-left-dasharray: 10px 3px; /* Dash length: 6px, spacing: 3px */
+}
+
+.font-myfont {
+  font-family: "MyFont", sans-serif;
+}
+
+.p22 {
+  font-family: "p22", sans-serif;
+}
+
+.table-text {
+  font-family: "MyFont", sans-serif;
+  line-height: 90%;
+  margin-bottom: -3%;
 }

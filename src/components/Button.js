@@ -1,8 +1,9 @@
 "use client";
 import gsap from "gsap";
+import { redirect } from "next/navigation";
 import React, { useEffect } from "react";
 
-const Button = ({ text, link }) => {
+const Button = ({ text, link = "/" }) => {
   useEffect(() => {
     gsap.set([".normalState", ".hoverState", "#blackArrow", "#whiteArrow"], {
       top: "50%",
@@ -98,14 +99,19 @@ const Button = ({ text, link }) => {
 
   return (
     <div
-      className="relative w-[140px]"
+      className="relative w-[140px] cursor-pointer"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onClick={() => redirect("/explore")}
     >
       <div className="text-container text-black z-50 absolute w-[96px] h-[45px] flex justify-center items-center">
-        <div className="w-full relative h-[22px] overflow-hidden">
-          <p className="text-[14px] absolute text-white normalState">{text}</p>
-          <p className="text-[14px] absolute text-black hoverState">{text}</p>
+        <div className="w-full relative h-[18px] overflow-hidden">
+          <p className="text-[12px] font-myfont tracking-wider absolute text-white normalState">
+            {text}
+          </p>
+          <p className="text-[12px] font-myfont tracking-wider absolute text-black hoverState">
+            {text}
+          </p>
         </div>
       </div>
 

@@ -229,7 +229,7 @@ export default function ParallaxSlider() {
                     DOCUMENTARY
                   </p>
                   <h1 className="font-myfont text-[46px] leading-none">
-                    KAFKA'S LAST
+                    KAFKA&apos;S LAST
                   </h1>
                 </div>
                 <div className="flex">
@@ -258,6 +258,7 @@ export default function ParallaxSlider() {
                   <h3 className="font-myfont text-[18px]">2024</h3>
                   <p className="font-myfont text-[10px]">WORLD PREMIERE</p>
                   <Image
+                    alt="award"
                     src={"/award.webp"}
                     height={200}
                     width={200}

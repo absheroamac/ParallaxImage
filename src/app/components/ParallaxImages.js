@@ -9,6 +9,7 @@ import ScrollTrigger from "gsap/ScrollTrigger";
 import CardWrapper from "@/components/CardWrapper";
 import Stars from "@/components/Stars";
 import Button from "@/components/Button";
+import Menu from "./Menu";
 
 gsap.registerPlugin(ScrollToPlugin, ScrollTrigger);
 
@@ -215,6 +216,9 @@ export default function ParallaxSlider() {
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-black">
+      <div className="absolute z-99 top-10 right-10">
+        <Menu />
+      </div>
       <div
         ref={containerRef}
         className="h-full w-full overflow-hidden"
@@ -328,7 +332,7 @@ export default function ParallaxSlider() {
       ></div>
 
       <Image
-        src={"/Layer 2.png"}
+        src={"/siena-logo.png"}
         className="absolute z-[99] top-6 left-6 w-20"
         alt="image"
         width={450}

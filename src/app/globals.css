@@ -70,6 +70,7 @@ body {
 .heading-text {
   letter-spacing: 0.03em;
   text-transform: uppercase;
+  line-height: 98%;
 }
 
 h1 > div {

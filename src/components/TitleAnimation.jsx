@@ -12,7 +12,10 @@ const TitleAnimation = ({ text }) => {
   useEffect(() => {
     const repeatCount = 8;
     const tl = gsap.timeline({ paused: true });
-    const split = new SplitText(headingRef.current, { type: "chars" });
+    const split = new SplitText(headingRef.current, {
+      type: "chars,words",
+      smartWrap: true,
+    });
 
     const directions = [];
 
@@ -76,7 +79,7 @@ const TitleAnimation = ({ text }) => {
   }, []);
 
   return (
-    <h1 className="heading-text" ref={headingRef}>
+    <h1 className="heading-text max-w-70 text-center" ref={headingRef}>
       {text}
     </h1>
   );

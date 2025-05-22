@@ -16,11 +16,26 @@ import TitleAnimation from "@/components/TitleAnimation";
 gsap.registerPlugin(ScrollToPlugin, ScrollTrigger, SplitText);
 
 const images = [
-  "/img1.jpg",
-  "/img2.jpg",
-  "/img3.jpg",
-  "/img4.jpg",
-  "/img5.jpg",
+  {
+    title: "outsider freud",
+    img: "/img1.jpg",
+  },
+  {
+    title: "Ana Maxim",
+    img: "/img2.jpg",
+  },
+  {
+    title: "My project x",
+    img: "/img3.jpg",
+  },
+  {
+    title: "Taboo",
+    img: "/img4.jpg",
+  },
+  {
+    title: "savoy",
+    img: "/img5.jpg",
+  },
 ];
 
 export default function ParallaxSlider() {
@@ -280,7 +295,7 @@ export default function ParallaxSlider() {
                     DOCUMENTARY
                   </p>
                   <div className="font-myfont  text-[46px] leading-none">
-                    <TitleAnimation text={"KAFKA'S LAST"} />
+                    <TitleAnimation text={src.title} />
                   </div>
                 </div>
                 <div className="flex">
@@ -356,7 +371,7 @@ export default function ParallaxSlider() {
               <CardWrapper>
                 <div className="parallax-card w-[90vw] h-[70vh] mx-auto rounded-3xl overflow-hidden">
                   <Image
-                    src={src}
+                    src={src.img}
                     width={1000}
                     height={2000}
                     className="w-full h-[100vh] object-cover object-center scale-105"

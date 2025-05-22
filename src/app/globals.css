@@ -66,3 +66,18 @@ body {
   line-height: 90%;
   margin-bottom: -3%;
 }
+
+.heading-text {
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+h1 > div {
+  overflow: hidden;
+}
+
+.cloneText {
+  position: absolute;
+  left: 0;
+  top: 0;
+}

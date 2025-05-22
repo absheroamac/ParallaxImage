@@ -10,8 +10,10 @@ import CardWrapper from "@/components/CardWrapper";
 import Stars from "@/components/Stars";
 import Button from "@/components/Button";
 import Menu from "./Menu";
+import { SplitText } from "gsap/SplitText";
+import TitleAnimation from "@/components/TitleAnimation";
 
-gsap.registerPlugin(ScrollToPlugin, ScrollTrigger);
+gsap.registerPlugin(ScrollToPlugin, ScrollTrigger, SplitText);
 
 const images = [
   "/img1.jpg",
@@ -26,6 +28,51 @@ export default function ParallaxSlider() {
   const lenisRef = useRef(null);
 
   useEffect(() => {
+    const split = new SplitText("#card-title", { type: "chars" });
+    const tl = gsap.timeline({ paused: true });
+    const repeatCount = 8;
+
+    split.chars.forEach((char, i) => {
+      const charText = char.innerText;
+      const original = document.createElement("div");
+      const clone = document.createElement("div");
+
+      original.className = "originalText";
+      original.innerText = charText;
+
+      clone.className = "cloneText";
+      clone.innerText = charText;
+
+      // Clear existing character and append both
+      char.innerHTML = "";
+      char.appendChild(original);
+      char.appendChild(clone);
+
+      // Set starting position for clone
+      gsap.set(clone, {
+        yPercent: i % 2 === 0 ? -100 : 100,
+        position: "absolute",
+        left: 0,
+        top: 0,
+      });
+
+      // Animate both children (original + clone)
+      const tween = gsap.to(char.childNodes, {
+        yPercent: i % 2 === 0 ? "+=100" : "-=100",
+        ease: "none",
+        repeat: repeatCount,
+        duration: 0.1,
+      });
+
+      tl.add(tween, 0); // Add all at same time
+    });
+
+    // Play full animation
+    gsap.to(tl, {
+      progress: 1,
+      duration: 4,
+      ease: "power4.inOut",
+    });
     if (!containerRef.current) return;
 
     const container = containerRef.current;
@@ -232,9 +279,9 @@ export default function ParallaxSlider() {
                   <p className="p22 tracking-[2.9px] text-[9px] text-white">
                     DOCUMENTARY
                   </p>
-                  <h1 className="font-myfont text-[46px] leading-none">
-                    KAFKA&apos;S LAST
-                  </h1>
+                  <div className="font-myfont  text-[46px] leading-none">
+                    <TitleAnimation text={"KAFKA'S LAST"} />
+                  </div>
                 </div>
                 <div className="flex">
                   <div className="w-40">
